@@ -41,9 +41,11 @@
 
 #include <roboptim/trajectory/visualization/limit-speed.hh>
 
-
-#include <roboptim/core/plugin/cfsqp.hh>
-
+#ifdef CFSQP_SOLVER
+# include <roboptim/core/plugin/cfsqp.hh>
+#elif IPOPT_SOLVER
+# include <roboptim/core/plugin/ipopt.hh>
+#endif
 
 #include "shared-tests/common.hh"
 
@@ -51,8 +53,14 @@ using namespace roboptim;
 using namespace roboptim::visualization;
 using namespace roboptim::visualization::gnuplot;
 
+#ifdef CFSQP_SOLVER
 typedef CFSQPSolver::problem_t::constraints_t constraint_t;
 typedef CFSQPSolver solver_t;
+#elif IPOPT_SOLVER
+typedef IpoptSolver::problem_t::constraints_t constraint_t;
+typedef IpoptSolver solver_t;
+#endif
+
 typedef FreeTimeTrajectory<CubicBSpline> freeTime_t;
 
 
@@ -115,7 +123,11 @@ int run_test ()
   gnuplot << plot_limitSpeed (freeTimeTraj, vMax);
 
 
+#ifdef CFSQP_SOLVER
   SolverFactory<solver_t> factory ("cfsqp", problem);
+#elif IPOPT_SOLVER
+  SolverFactory<solver_t> factory ("ipopt", problem);
+#endif
   solver_t& solver = factory ();
 
   std::cout << solver << std::endl;

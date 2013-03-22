@@ -81,6 +81,16 @@ ENDIF()
 
 ADD_REQUIRED_DEPENDENCY("roboptim-core >= 0.5")
 
+# Support for Ipopt or CFSQP solvers (required by test suite)
+# Default solver is set to CFSQP
+IF (IPOPT_SOLVER)
+  ADD_REQUIRED_DEPENDENCY("roboptim-core-plugin-ipopt >= 0.5")
+  ADD_DEFINITIONS(-DIPOPT_SOLVER)
+ELSE ()
+  ADD_REQUIRED_DEPENDENCY("roboptim-core-plugin-cfsqp >= 0.5")
+  ADD_DEFINITIONS(-DCFSQP_SOLVER)
+ENDIF()
+
 HEADER_INSTALL("${HEADERS}")
 
 ADD_SUBDIRECTORY(src)
